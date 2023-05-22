@@ -18,9 +18,22 @@ func main() {
 	// Open the file
 	file, _ := os.Open(file)
 	scanner := bufio.NewScanner(file)
-	var resultString []string
+	var resultStringPart1 []string
+	var resultStringPart2 []string
 
-	stackList := []Stack{
+	stackList1 := []Stack{
+		{[]string{"W", "B", "D", "N", "C", "F", "J"}},
+		{[]string{"P", "Z", "V", "Q", "L", "S", "T"}},
+		{[]string{"P", "Z", "B", "G", "J", "T"}},
+		{[]string{"D", "T", "L", "J", "Z", "B", "H", "C"}},
+		{[]string{"G", "V", "B", "J", "S"}},
+		{[]string{"P", "S", "Q"}},
+		{[]string{"B", "V", "D", "F", "L", "M", "P", "N"}},
+		{[]string{"P", "S", "M", "F", "B", "D", "L", "R"}},
+		{[]string{"V", "D", "T", "R"}},
+	}
+
+	stackList2 := []Stack{
 		{[]string{"W", "B", "D", "N", "C", "F", "J"}},
 		{[]string{"P", "Z", "V", "Q", "L", "S", "T"}},
 		{[]string{"P", "Z", "B", "G", "J", "T"}},
@@ -40,28 +53,47 @@ func main() {
 		fromWhere, _ := strconv.Atoi(lineSplit[3])
 		toWhere, _ := strconv.Atoi(lineSplit[5])
 
-		stackList = calculateStack(howMany, fromWhere, toWhere, stackList)
+		calculateStackPart1(howMany, fromWhere, toWhere, stackList1)
+		calculateStackPart2(howMany, fromWhere, toWhere, stackList2)
 	}
 
-	for _, val := range stackList {
-		resultString = append(resultString, val.stack[len(val.stack)-1])
+	for _, val := range stackList1 {
+		resultStringPart1 = append(resultStringPart1, val.stack[len(val.stack)-1])
 	}
-	log.Println("ResultString:", strings.Join(resultString, ""))
+	for _, val := range stackList2 {
+		resultStringPart2 = append(resultStringPart2, val.stack[len(val.stack)-1])
+	}
+	log.Println("ResultStringPart1:", strings.Join(resultStringPart1, ""))
+	log.Println("ResultStringPart2:", strings.Join(resultStringPart2, ""))
 }
 
-func calculateStack(howMany int, fromWhere int, toWhere int, stackList []Stack) []Stack {
-	fromStack := stackList[fromWhere-1].stack
-	toStack := stackList[toWhere-1].stack
+func calculateStackPart1(howMany int, fromWhere int, toWhere int, stackList1 []Stack) {
+	fromStack := stackList1[fromWhere-1].stack
+	toStack := stackList1[toWhere-1].stack
 
 	reverseStack(fromStack)
 	toStack = append(toStack, fromStack[:howMany]...)
 	fromStack = fromStack[howMany:]
 	reverseStack(fromStack)
 
-	stackList[fromWhere-1].stack = fromStack
-	stackList[toWhere-1].stack = toStack
+	stackList1[fromWhere-1].stack = fromStack
+	stackList1[toWhere-1].stack = toStack
+}
 
-	return stackList
+func calculateStackPart2(howMany int, fromWhere int, toWhere int, stackList2 []Stack) {
+	fromStack := stackList2[fromWhere-1].stack
+	toStack := stackList2[toWhere-1].stack
+
+	reverseStack(fromStack)
+	var tempStack []string
+	tempStack = append(tempStack, fromStack[:howMany]...)
+	reverseStack(tempStack)
+	toStack = append(toStack, tempStack...)
+	fromStack = fromStack[howMany:]
+	reverseStack(fromStack)
+
+	stackList2[fromWhere-1].stack = fromStack
+	stackList2[toWhere-1].stack = toStack
 }
 
 func reverseStack(stack []string) {
